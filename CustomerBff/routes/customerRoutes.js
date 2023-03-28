@@ -4,6 +4,46 @@ const { isMobileDevice, removeSensitiveInfo } = require('../helpers/customerHelp
 
 const router = express.Router();
 
+const backendServiceUrl = 'http://localhost:5678';
+
+
+/**
+ * Create a new customer.
+ * Endpoint: POST /customers
+ *
+ * Request body:
+ * - Customer data (object)
+ *
+ * Response:
+ * Status code: 201 Created
+ * Data format: JSON
+ * Data: Created Customer object
+ */
+router.post("/customers", async (req, res) => {
+    try {
+        const customers = req.body;
+        const userAgent = req.headers["user-agent"];
+
+        if (!userAgent) {
+            return res.status(400).json({ message: "User-Agent missing" });
+        }
+
+        const customerResponse = await axios.post(
+            `${backendServiceUrl}/customers`,
+            customers
+        );
+
+        res.status(customerResponse.status).json(customerResponse.data);
+    } catch (error) {
+        if (error.response) {
+            res.status(error.response.status).json({ message: error.response.statusText });
+        } else {
+            console.error("Error:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+});
+
 /**
  * Retrieve a specific customer by ID.
  * Endpoint: GET /customers/:id
@@ -22,11 +62,11 @@ router.get('/customers/:id', async (req, res) => {
         const userAgent = req.headers['user-agent'];
 
         if (!userAgent) {
-            return res.status(400).json({ message: 'User-Agent missing'})
+            return res.status(400).json({ message: 'User-Agent missing' })
         }
 
         // Call the Customer Service backend
-        const customerResponse = await axios.get(`http://localhost:3002/customers/${id}`);
+        const customerResponse = await axios.get(`${backendServiceUrl}/customers/${id}`);
         let customerData = customerResponse.data;
 
         // Apply the necessary adaptation based on the user-agent header
@@ -37,7 +77,7 @@ router.get('/customers/:id', async (req, res) => {
         if (error.response) {
             res.status(error.response.status).json(error.response.statusText);
         } else {
-            res.status(500).json({ message: 'An internal server error occurred'});
+            res.status(500).json({ message: 'An internal server error occurred' });
             console.error(error);
         }
     }
@@ -61,11 +101,11 @@ router.get('/customers', async (req, res) => {
         const userAgent = req.headers['user-agent'];
 
         if (!userAgent) {
-            return res.status(400).json({ message: 'User-Agent missing'})
+            return res.status(400).json({ message: 'User-Agent missing' })
         }
 
         // Call the Customer Service backend
-        const customerResponse = await axios.get(`http://localhost:3002/customers`, {
+        const customerResponse = await axios.get(`${backendServiceUrl}/customers`, {
             params: { userId }
         });
         let customerData = customerResponse.data;
@@ -78,7 +118,7 @@ router.get('/customers', async (req, res) => {
         if (error.response) {
             res.status(error.response.status).json(error.response.statusText);
         } else {
-            res.status(500).json({ message: 'An internal server error occurred'});
+            res.status(500).json({ message: 'An internal server error occurred' });
             console.error(error);
         }
     }

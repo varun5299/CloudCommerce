@@ -9,7 +9,7 @@ let connection;
 function handleDisconnect() {
     // Create a new MySQL connection using environment variables or default values
     connection = mysql.createConnection({
-        host: process.env.MYSQL_HOST || 'localhost' || 'mystack-databaseprimaryinstance-xwjmn7hzbsci.ccza0cxdcavd.us-east-1.rds.amazonaws.com',
+        host: process.env.MYSQL_HOST || 'localhost',
         port: process.env.MYSQL_PORT || '3306',
         user: process.env.MYSQL_USER || 'root',
         password: process.env.MYSQL_PASSWORD || 'password',

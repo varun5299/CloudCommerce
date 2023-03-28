@@ -1,8 +1,10 @@
 const express = require('express');
 const jwtValidation = require('./middleware/jwtValidation');
 const bookRoutes = require('./routes/bookRoutes');
+const healthCheck = require('./routes/healthcheck')
+
 const app = express();
-const PORT = 80;
+const PORT = 3000;
 
 // Use JSON middleware to parse incoming request bodies
 app.use(express.json());
@@ -12,6 +14,8 @@ app.use(jwtValidation);
 
 // Mount the book routes under the '/books' path
 app.use('/books', bookRoutes);
+app.use('/', healthCheck);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

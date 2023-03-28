@@ -59,6 +59,8 @@ router.put('/:ISBN', (req, res) => {
     const ISBN = req.params.ISBN;
     const book = req.body;
 
+    
+
     // Validate request body
     if (!book.ISBN || !book.title || !book.Author || !book.description || !book.genre || !book.price || !book.quantity) {
         return res.status(400).json({ message: 'Missing required fields in request body.' });
