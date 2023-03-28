@@ -4,7 +4,7 @@ const bookRoutes = require('./routes/bookRoutes');
 const healthCheck = require('./routes/healthcheck')
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // Use JSON middleware to parse incoming request bodies
 app.use(express.json());

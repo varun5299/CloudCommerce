@@ -3,7 +3,7 @@ const axios = require('axios');
 const { isMobileDevice, processBookData } = require('../helpers/bookHelpers');
 const router = express.Router();
 
-const backendServiceUrl = 'http://localhost:1234';
+const backendServiceUrl = 'http://52.200.6.7:3000';
 
 /**
  * Book BFF endpoint handler for retrieving a book by ISBN.
