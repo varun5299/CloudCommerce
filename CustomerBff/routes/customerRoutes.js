@@ -4,7 +4,7 @@ const { isMobileDevice, removeSensitiveInfo } = require('../helpers/customerHelp
 
 const router = express.Router();
 
-const backendServiceUrl = 'http://localhost:5678';
+const backendServiceUrl = 'http://34.203.62.206:3000';
 
 
 /**
@@ -75,6 +75,7 @@ router.get('/customers/:id', async (req, res) => {
         res.json(customerData);
     } catch (error) {
         if (error.response) {
+            console.log(error.response.statusText);
             res.status(error.response.status).json(error.response.statusText);
         } else {
             res.status(500).json({ message: 'An internal server error occurred' });

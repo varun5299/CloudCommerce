@@ -47,7 +47,7 @@ const isMobileDevice = (userAgent) => {
     }
   
     if (genre === 'non-fiction') {
-      return '3';
+      return 3;
     } else {
       return genre;
     }

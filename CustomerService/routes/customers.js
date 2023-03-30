@@ -32,6 +32,7 @@ router.post('/', (req, res) => {
             return res.status(500).json({ message: 'Internal server error.' });
         }
         if (results.length > 0) {
+            console.log("This user ID already exists in the system.");
             return res.status(422).json({ message: 'This user ID already exists in the system.' });
         }
         // Add customer to database
@@ -85,8 +86,8 @@ router.get('/:id', (req, res) => {
 
 router.get('/', (req, res) => {
     const userId = req.query.userId;
-    if (!isValidEmail(userId)){
-        return res.status(400).json({message: 'Email is not valid'});
+    if (!isValidEmail(userId)) {
+        return res.status(400).json({ message: 'Email is not valid' });
     }
 
     // Check if user ID exists in the system

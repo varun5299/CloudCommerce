@@ -5,7 +5,7 @@ const healthCheck = require('./routes/healthcheck')
 
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 
 // Initialize Express middleware
 app.use(express.json()); // Parse incoming JSON payloads

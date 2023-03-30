@@ -3,7 +3,7 @@ const axios = require('axios');
 const { isMobileDevice, processBookData } = require('../helpers/bookHelpers');
 const router = express.Router();
 
-const backendServiceUrl = 'http://52.200.6.7:3000';
+const backendServiceUrl = 'http://3.225.92.130:3000';
 
 /**
  * Book BFF endpoint handler for retrieving a book by ISBN.
@@ -13,10 +13,13 @@ const backendServiceUrl = 'http://52.200.6.7:3000';
  * @param {Object} res - The response object.
  * @returns {void}
  */
-router.get('/isbn/:ISBN', async (req, res) => {
+router.get(['/isbn/:ISBN', '/:ISBN'], async (req, res) => {
   try {
     const { ISBN } = req.params;
     const userAgent = req.headers['user-agent'];
+
+    console.log(userAgent)
+
 
     if (!userAgent) {
       return res.status(400).json({ message: 'User-Agent missing' });
