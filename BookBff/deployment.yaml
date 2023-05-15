@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: books-bff-app
+  namespace: book-store-ns
+spec:
+  selector:
+    matchLabels:
+      run: books-bff-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: books-bff-app
+    spec:
+      containers:
+      - name: books-bff-container
+        image: varun5299/book-bff
+        ports:
+        - containerPort: 8002
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8002
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3

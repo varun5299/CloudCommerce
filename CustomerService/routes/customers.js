@@ -1,6 +1,13 @@
 const express = require('express');
 const connection = require('../db/connection');
 const { isValidEmail, isValidState } = require('../helpers/validators');
+const { Kafka } = require('kafkajs');
+
+const kafka = new Kafka({
+    clientId: 'customer-service',
+    brokers: ['44.214.218.139:9092', '44.214.213.141:9092'],
+});
+
 
 const router = express.Router();
 
@@ -10,10 +17,9 @@ const router = express.Router();
  * @param {Object} req.body - The request body containing customer data.
  * @returns {Object} res - The response object with status and JSON body.
  */
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const customer = req.body;
 
-    // Validate request body
     if (!customer.userId || !customer.name || !customer.phone || !customer.address || !customer.city || !customer.state || !customer.zipcode) {
         return res.status(400).json({ message: 'Missing required fields in request body.' });
     }
@@ -24,9 +30,8 @@ router.post('/', (req, res) => {
         return res.status(400).json({ message: 'State must be a valid 2-letter US state abbreviation.' });
     }
 
-    // Check if userId already exists in the system
     const userIdQuery = 'SELECT * FROM Customer WHERE userId = ?';
-    connection.query(userIdQuery, [customer.userId], (err, results) => {
+    connection.query(userIdQuery, [customer.userId], async (err, results) => {
         if (err) {
             console.error('Error checking if user ID already exists: ', err);
             return res.status(500).json({ message: 'Internal server error.' });
@@ -35,16 +40,34 @@ router.post('/', (req, res) => {
             console.log("This user ID already exists in the system.");
             return res.status(422).json({ message: 'This user ID already exists in the system.' });
         }
-        // Add customer to database
+
         const addCustomerQuery = 'INSERT INTO Customer (userId, name, phone, address, address2, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        connection.query(addCustomerQuery, [customer.userId, customer.name, customer.phone, customer.address, customer.address2 || '', customer.city, customer.state, customer.zipcode], (err, results) => {
+        connection.query(addCustomerQuery, [customer.userId, customer.name, customer.phone, customer.address, customer.address2 || '', customer.city, customer.state, customer.zipcode], async (err, results) => {
             if (err) {
                 console.error('Error adding customer to database: ', err);
                 return res.status(500).json({ message: 'Internal server error.' });
             }
 
-            // Return successful customer creation
             const newCustomerId = results.insertId;
+
+            // Send message to Kafka
+            const kafkaProducer = kafka.producer();
+            await kafkaProducer.connect();
+
+            const customerRegisteredEvent = {
+                id: newCustomerId,
+                ...customer,
+            };
+
+            await kafkaProducer.send({
+                topic: 'varunaga.customer.evt',
+                messages: [
+                    { value: JSON.stringify(customerRegisteredEvent) },
+                ],
+            });
+
+            await kafkaProducer.disconnect();
+
             return res.status(201).location(`${req.baseUrl}/customers/${newCustomerId}`).json({ id: newCustomerId, ...customer });
         });
     });

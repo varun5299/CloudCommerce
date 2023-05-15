@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-service-app
+  namespace: book-store-ns
+spec:
+  selector:
+    matchLabels:
+      run: customers-service-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: customers-service-app
+    spec:
+      containers:
+      - name: customers-service-container
+        image: varun5299/customerservice
+        ports:
+        - containerPort: 3001
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8002
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3

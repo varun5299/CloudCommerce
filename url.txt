@@ -1,2 +1,0 @@
-http://ALB-194157116.us-east-1.elb.amazonaws.com:80
-http://ALB-194157116.us-east-1.elb.amazonaws.com:80

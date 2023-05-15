@@ -4,7 +4,7 @@ const { isMobileDevice, removeSensitiveInfo } = require('../helpers/customerHelp
 
 const router = express.Router();
 
-const backendServiceUrl = 'http://34.203.62.206:3000';
+const backendServiceUrl = 'http://customers-service-app:3001';
 
 
 /**

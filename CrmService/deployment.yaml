@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crm-app
+  namespace: book-store-ns
+spec:
+  selector:
+    matchLabels:
+      run: crm-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: crm-app
+    spec:
+      containers:
+      - name: crm-container
+        image: varun5299/crmservice
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8002
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
